@@ -24,11 +24,15 @@
                 {
                     <div class="question" style="display:@(i == 0 ? "block" : "none")">
 
-                        <h6>Question <span id="qNumber">1</span> / @Model.Count</h6>
+                        <!-- 🔥 IMPORTANT -->
+                        <input type="hidden" name="questionIds[@i]" value="@Model[i].Id" />
+
+                        <h6>Question <span id="qNumber">@(i + 1)</span> / @Model.Count</h6>
 
                         <h5>@Model[i].QuestionText</h5>
 
-                        <input type="radio" name="answers[@i]" value="A" required /> @Model[i].OptionA <br />
+                        <!-- ❌ required हटाया -->
+                        <input type="radio" name="answers[@i]" value="A" /> @Model[i].OptionA <br />
                         <input type="radio" name="answers[@i]" value="B" /> @Model[i].OptionB <br />
                         <input type="radio" name="answers[@i]" value="C" /> @Model[i].OptionC <br />
                         <input type="radio" name="answers[@i]" value="D" /> @Model[i].OptionD <br />
@@ -55,69 +59,67 @@
     </form>
 </div>
 
-<!-- 🔊 AUDIO -->
-<audio id="tickSound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
-<audio id="endSound" src="https://www.soundjay.com/button/beep-10.wav"></audio>
+@section Scripts {
 
-<!-- 🔥 FIXED SCRIPT -->
-<script>
-    var current = 0;
-    var questions;
-    var total;
-    var timePerQuestion = 10;
-    var timer;
+    <script>
+        var current = 0;
+        var questions;
+        var total;
+        var timer;
+        var timePerQuestion = 10;
 
-    window.onload = function () {
-        questions = document.getElementsByClassName("question");
-        total = questions.length;
+        document.addEventListener("DOMContentLoaded", function () {
+            questions = document.getElementsByClassName("question");
+            total = questions.length;
 
-        if (total > 0) {
-            questions[0].style.display = "block";
-            updateUI();
+            if (total > 0) {
+                showQuestion(0);
+            }
+        });
+
+        function showQuestion(index) {
+            for (var i = 0; i < questions.length; i++) {
+                questions[i].style.display = "none";
+            }
+
+            questions[index].style.display = "block";
+            updateProgress();
             startTimer();
         }
-    };
 
-    function updateUI() {
-        document.getElementById("qNumber").innerText = current + 1;
+        function updateProgress() {
+            var progress = ((current + 1) / total) * 100;
+            document.getElementById("progressBar").style.width = progress + "%";
+        }
 
-        var progress = ((current + 1) / total) * 100;
-        document.getElementById("progressBar").style.width = progress + "%";
-    }
+        function startTimer() {
+            clearInterval(timer);
+            var time = timePerQuestion;
 
-    function startTimer() {
-        var time = timePerQuestion;
-        document.getElementById("timer").innerText = time;
-
-        timer = setInterval(function () {
-            time--;
             document.getElementById("timer").innerText = time;
 
-            document.getElementById("tickSound").play();
+            timer = setInterval(function () {
+                time--;
+                document.getElementById("timer").innerText = time;
 
-            if (time <= 0) {
-                clearInterval(timer);
-                document.getElementById("endSound").play();
-                nextQuestion();
+                if (time <= 0) {
+                    clearInterval(timer);
+                    nextQuestion();
+                }
+            }, 1000);
+        }
+
+        function nextQuestion() {
+            clearInterval(timer);
+
+            current++;
+
+            if (current < total) {
+                showQuestion(current);
+            } else {
+                document.getElementById("quizForm").submit();
             }
-        }, 1000);
-    }
-
-    function nextQuestion() {
-        clearInterval(timer);
-
-        if (questions[current]) {
-            questions[current].style.display = "none";
         }
+    </script>
 
-        current++;
-
-        if (current < total) {
-            questions[current].style.display = "block";
-            updateUI();
-            startTimer();
-        } else {
-            document.getElementById("quizForm").submit();
-        }
-    }
-</script>
+}

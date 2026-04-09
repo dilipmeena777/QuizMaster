@@ -78,7 +78,9 @@ public class AdminController : Controller
     {
         var role = HttpContext.Session.GetString("UserRole");
 
-        if (role != "Admin")
+        var actionName = context.RouteData.Values["action"]?.ToString();
+
+        if (role != "Admin" && actionName != "AdminLogin")
         {
             context.Result = RedirectToAction("Login", "Account");
         }
@@ -90,5 +92,22 @@ public class AdminController : Controller
         HttpContext.Session.Clear(); // 🔥 session clear
         return RedirectToAction("Index", "Home"); // 👉 Home page pe bhej
     }
+    public IActionResult AdminLogin()
+    {
+        return View();
+    }
+    
+    [HttpPost]
+    public IActionResult AdminLogin(string email, string password)
+    {
+        // 🔥 TEMP FIX (direct login)
+        if (email == "admin@gmail.com" && password == "123")
+        {
+            HttpContext.Session.SetString("UserRole", "Admin");
+            return RedirectToAction("Index");
+        }
 
+        ViewBag.Message = "Invalid Admin Login";
+        return View();
+    }
 }

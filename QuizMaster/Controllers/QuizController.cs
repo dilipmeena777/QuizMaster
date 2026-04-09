@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 public class QuizController : Controller
 {
@@ -18,11 +18,10 @@ public class QuizController : Controller
         return View(questions);
     }
 
-    // 🔹 Quiz Submit
+    // 🔹 Quiz Submit (FINAL FIXED)
     [HttpPost]
-    public IActionResult Submit(List<string> answers)
+    public IActionResult Submit(List<string> answers, List<int> questionIds)
     {
-        var questions = _context.Questions.ToList();
         int score = 0;
 
         if (answers == null)
@@ -30,12 +29,14 @@ public class QuizController : Controller
             answers = new List<string>();
         }
 
-        for (int i = 0; i < questions.Count; i++)
+        for (int i = 0; i < questionIds.Count; i++)
         {
-            if (i < answers.Count)
+            var question = _context.Questions.Find(questionIds[i]);
+
+            if (question != null && i < answers.Count)
             {
                 var userAnswer = answers[i];
-                var correctAnswer = questions[i].CorrectOption;
+                var correctAnswer = question.CorrectOption;
 
                 if (!string.IsNullOrEmpty(userAnswer) &&
                     userAnswer.Trim().ToUpper() == correctAnswer.Trim().ToUpper())
