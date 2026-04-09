@@ -1,0 +1,23 @@
+﻿@model List<Question>
+
+<h2>All Questions</h2>
+
+<a href="/Admin/Create" class="btn btn-primary">Add New</a>
+
+<table border="1">
+    <tr>
+        <th>Question</th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var q in Model)
+    {
+        <tr>
+            <td>@q.QuestionText</td>
+            <td>
+                <a href="/Admin/Edit/@q.Id">Edit</a> |
+                <a href="/Admin/Delete/@q.Id">Delete</a>
+            </td>
+        </tr>
+    }
+</table>

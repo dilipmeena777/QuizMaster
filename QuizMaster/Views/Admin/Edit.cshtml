@@ -1,0 +1,17 @@
+﻿@model Question
+
+<form method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <input type="text" asp-for="QuestionText" /><br />
+
+    <input type="text" asp-for="OptionA" /><br />
+    <input type="text" asp-for="OptionB" /><br />
+    <input type="text" asp-for="OptionC" /><br />
+    <input type="text" asp-for="OptionD" /><br />
+
+    <input type="text" asp-for="CorrectOption" /><br />
+
+    <button type="submit">Update</button>
+</form>
+

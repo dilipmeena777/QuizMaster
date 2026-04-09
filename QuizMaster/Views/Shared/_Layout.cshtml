@@ -1,0 +1,34 @@
+﻿@using Microsoft.AspNetCore.Http
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuizMaster</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+
+    <nav class="navbar navbar-dark bg-dark p-2">
+        <a class="navbar-brand text-white" href="/">QuizMaster</a>
+
+        @if (Context.Session.GetString("UserEmail") != null)
+        {
+            <a href="/Account/Logout" class="btn btn-danger">Logout</a>
+        }
+        <li class="nav-item">
+            <a class="nav-link" href="/Home/Dashboard">Dashboard</a>
+        </li>
+    </nav>
+
+    <div class="container mt-4">
+        @RenderBody()
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

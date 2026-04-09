@@ -1,0 +1,30 @@
+﻿@model List<Result>
+
+<div class="container mt-4">
+    <h2 class="text-center">🏆 Leaderboard</h2>
+
+    <table class="table table-bordered mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>Rank</th>
+                <th>User ID</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int rank = 1;
+            }
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@rank</td>
+                    <td>@item.UserId</td>
+                    <td>@item.Score</td>
+                </tr>
+                rank++;
+            }
+        </tbody>
+    </table>
+</div>

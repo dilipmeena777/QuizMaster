@@ -1,0 +1,123 @@
+﻿@model List<Question>
+
+<div style="background: linear-gradient(to right, #4facfe, #00f2fe); min-height:100vh; padding:30px;">
+
+    <h1 style="text-align:center; color:white;">🔥 QuizMaster</h1>
+
+    <!-- ⏱ Timer -->
+    <h4 class="text-center bg-danger p-2 rounded text-white">
+        ⏱ Time Left: <span id="timer">10</span> sec
+    </h4>
+
+    <!-- 📊 Progress -->
+    <div class="progress mt-2">
+        <div id="progressBar" class="progress-bar bg-success" style="width: 0%"></div>
+    </div>
+
+    <form id="quizForm" method="post" action="/Quiz/Submit">
+
+        <div class="card p-4 mt-4">
+
+            <div id="quiz-container">
+
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <div class="question" style="display:@(i == 0 ? "block" : "none")">
+
+                        <h6>Question <span id="qNumber">1</span> / @Model.Count</h6>
+
+                        <h5>@Model[i].QuestionText</h5>
+
+                        <input type="radio" name="answers[@i]" value="A" required /> @Model[i].OptionA <br />
+                        <input type="radio" name="answers[@i]" value="B" /> @Model[i].OptionB <br />
+                        <input type="radio" name="answers[@i]" value="C" /> @Model[i].OptionC <br />
+                        <input type="radio" name="answers[@i]" value="D" /> @Model[i].OptionD <br />
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+        <div style="text-align:center; margin-top:20px;">
+
+            <button type="button" onclick="nextQuestion()" class="btn btn-primary m-2">
+                Next
+            </button>
+
+            <button type="submit" class="btn btn-success m-2">
+                Submit Quiz
+            </button>
+
+        </div>
+
+    </form>
+</div>
+
+<!-- 🔊 AUDIO -->
+<audio id="tickSound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+<audio id="endSound" src="https://www.soundjay.com/button/beep-10.wav"></audio>
+
+<!-- 🔥 FIXED SCRIPT -->
+<script>
+    var current = 0;
+    var questions;
+    var total;
+    var timePerQuestion = 10;
+    var timer;
+
+    window.onload = function () {
+        questions = document.getElementsByClassName("question");
+        total = questions.length;
+
+        if (total > 0) {
+            questions[0].style.display = "block";
+            updateUI();
+            startTimer();
+        }
+    };
+
+    function updateUI() {
+        document.getElementById("qNumber").innerText = current + 1;
+
+        var progress = ((current + 1) / total) * 100;
+        document.getElementById("progressBar").style.width = progress + "%";
+    }
+
+    function startTimer() {
+        var time = timePerQuestion;
+        document.getElementById("timer").innerText = time;
+
+        timer = setInterval(function () {
+            time--;
+            document.getElementById("timer").innerText = time;
+
+            document.getElementById("tickSound").play();
+
+            if (time <= 0) {
+                clearInterval(timer);
+                document.getElementById("endSound").play();
+                nextQuestion();
+            }
+        }, 1000);
+    }
+
+    function nextQuestion() {
+        clearInterval(timer);
+
+        if (questions[current]) {
+            questions[current].style.display = "none";
+        }
+
+        current++;
+
+        if (current < total) {
+            questions[current].style.display = "block";
+            updateUI();
+            startTimer();
+        } else {
+            document.getElementById("quizForm").submit();
+        }
+    }
+</script>
